@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Carnet de Cocktails</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 1rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    form, .cocktail-list, .quiz-section {
+      max-width: 600px;
+      margin: 1rem auto;
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 0.5rem;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .cocktail {
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 1rem;
+    }
+    @media (max-width: 600px) {
+      body {
+        margin: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Mon Carnet de Cocktails</h1>
+
+  <form id="cocktailForm">
+    <label for="name">Nom du Cocktail :</label>
+    <input type="text" id="name" required>
+
+    <label for="ingredients">Ingrédients :</label>
+    <textarea id="ingredients" required></textarea>
+
+    <label for="instructions">Instructions :</label>
+    <textarea id="instructions" required></textarea>
+
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div class="cocktail-list" id="cocktailList"></div>
+
+  <div class="quiz-section">
+    <h2>🎲 Quiz Cocktail</h2>
+    <button onclick="startQuiz()">Lancer un quiz</button>
+    <div id="quizArea" style="margin-top:1rem;"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('cocktailForm');
+    const list = document.getElementById('cocktailList');
+    const quizArea = document.getElementById('quizArea');
+
+    function loadCocktails() {
+      const cocktails = JSON.parse(localStorage.getItem('cocktails')) || [];
+      list.innerHTML = '';
+      cocktails.forEach((cocktail) => {
+        const div = document.createElement('div');
+        div.className = 'cocktail';
+        div.innerHTML = `
+          <h3>${cocktail.name}</h3>
+          <p><strong>Ingrédients :</strong><br>${cocktail.ingredients.replace(/\n/g, '<br>')}</p>
+          <p><strong>Instructions :</strong><br>${cocktail.instructions.replace(/\n/g, '<br>')}</p>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const ingredients = document.getElementById('ingredients').value.trim();
+      const instructions = document.getElementById('instructions').value.trim();
+
+      if (!name || !ingredients || !instructions) return;
+
+      const newCocktail = { name, ingredients, instructions };
+      const cocktails = JSON.parse(localStorage.getItem('cocktails')) || [];
+      cocktails.push(newCocktail);
+      localStorage.setItem('cocktails', JSON.stringify(cocktails));
+
+      form.reset();
+      loadCocktails();
+    });
+
+    function startQuiz() {
+      const cocktails = JSON.parse(localStorage.getItem('cocktails')) || [];
+      if (cocktails.length === 0) {
+        quizArea.innerHTML = '<p>Aucun cocktail enregistré.</p>';
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * cocktails.length);
+      const cocktail = cocktails[randomIndex];
+      quizArea.innerHTML = `
+        <h3>Quels sont les ingrédients du <strong>${cocktail.name}</strong> ?</h3>
+        <textarea id="quizAnswer" rows="4" placeholder="Écris ta réponse ici..."></textarea>
+        <button onclick="checkQuiz('${cocktail.ingredients.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Voir la réponse</button>
+        <div id="quizFeedback" style="margin-top:1rem;"></div>
+      `;
+    }
+
+    function checkQuiz(correctAnswer) {
+      const userAnswer = document.getElementById('quizAnswer').value.trim();
+      const feedback = document.getElementById('quizFeedback');
+      feedback.innerHTML = `
+        <p><strong>Ta réponse :</strong><br>${userAnswer.replace(/\n/g, '<br>')}</p>
+        <p><strong>Bonne réponse :</strong><br>${correctAnswer.replace(/\\n/g, '<br>')}</p>
+      `;
+    }
+
+    loadCocktails();
+  </script>
+</body>
+</html>
