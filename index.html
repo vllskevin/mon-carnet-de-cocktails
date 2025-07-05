@@ -64,12 +64,24 @@
     background-color: #e6594c;
     transform: scale(1.03);
   }
+
+  /* Nouveau layout pour cocktail */
   .cocktail {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
     border-bottom: 1px dashed #ccc;
-    position: relative;
-    padding-right: 90px; /* <-- ajouté pour laisser de la place au bouton */
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .cocktail-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .cocktail-content p {
+    margin-top: 0.3rem;
   }
   .cocktail img {
     max-width: 100%;
@@ -78,9 +90,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   .edit-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    flex-shrink: 0;
     background: var(--accent-color);
     color: #333;
     font-weight: bold;
@@ -90,11 +100,14 @@
     cursor: pointer;
     font-size: 0.85rem;
     transition: background-color 0.3s;
-    white-space: nowrap; /* évite le retour à la ligne */
+    white-space: nowrap;
+    height: max-content;
+    align-self: start;
   }
   .edit-btn:hover {
     background-color: #f0c040;
   }
+
   .flashcard {
     text-align: center;
     background-color: #fffbe6;
@@ -197,15 +210,12 @@
 </section>
 
 <script>
-  // Charge ou initialise la liste des cocktails depuis localStorage
   let cocktails = JSON.parse(localStorage.getItem('cocktails')) || [];
 
-  // Variables flashcard
   let shuffledCocktails = [];
   let flashcardIndex = 0;
   let editingIndex = null;
 
-  // Éléments DOM
   const cocktailListDiv = document.getElementById('cocktailList');
   const flashcardArea = document.getElementById('flashcardArea');
   const progressArea = document.getElementById('progressArea');
@@ -228,10 +238,12 @@
       const div = document.createElement('div');
       div.className = 'cocktail';
       div.innerHTML = `
-        <strong>${c.name}</strong>
+        <div class="cocktail-content">
+          <strong>${c.name}</strong>
+          <p style="white-space: pre-wrap; margin-top: 0.3rem;">${c.ingredients}</p>
+          ${c.image ? `<img src="${c.image}" alt="${c.name}">` : ''}
+        </div>
         <button class="edit-btn" onclick="editCocktail(${i})">Modifier</button>
-        <p style="white-space: pre-wrap;">${c.ingredients}</p>
-        ${c.image ? `<img src="${c.image}" alt="${c.name}">` : ''}
       `;
       cocktailListDiv.appendChild(div);
     });
@@ -265,7 +277,7 @@
     const ingredients = document.getElementById('ingredients').value.trim();
     const image = document.getElementById('image').value.trim();
     if(!name || !ingredients) return alert("Nom et ingrédients obligatoires");
-    
+
     if(editingIndex !== null){
       cocktails[editingIndex] = {...cocktails[editingIndex], name, ingredients, image};
     } else {
@@ -277,7 +289,6 @@
     shuffleAndStartFlashcards();
   };
 
-  // Flashcards functions
   function shuffleArray(arr) {
     for(let i=arr.length-1; i>0; i--){
       const j = Math.floor(Math.random() * (i+1));
@@ -343,7 +354,6 @@
     progressArea.textContent = `Cocktails connus (validations positives) : ${totalKnown} / ${cocktails.length}`;
   }
 
-  // Navigation flashcards
   document.getElementById('nextFlashcardBtn').onclick = () => {
     flashcardIndex++;
     if(flashcardIndex >= shuffledCocktails.length) flashcardIndex = 0;
@@ -360,7 +370,6 @@
     shuffleAndStartFlashcards();
   };
 
-  // Initialisation
   renderCocktailList();
   shuffleAndStartFlashcards();
 </script>
