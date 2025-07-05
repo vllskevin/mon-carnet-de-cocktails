@@ -1,258 +1,367 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🍸 Mon Carnet de Cocktails</title>
-  <style>
-    :root {
-      --main-color: #ff6f61;
-      --accent-color: #ffd166;
-      --bg-color: #fef8f3;
-      --card-color: #fff;
-      --text-color: #333;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🍸 Carnet & Quiz Cocktails</title>
+<style>
+  :root {
+    --main-color: #ff6f61;
+    --accent-color: #ffd166;
+    --bg-color: #fef8f3;
+    --card-color: #fff;
+    --text-color: #333;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 1rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  h1 {
+    text-align: center;
+    color: var(--main-color);
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    animation: popIn 0.8s ease-out;
+  }
+  h2 {
+    color: var(--main-color);
+    margin-top: 2rem;
+  }
+  form, .cocktail-list, .flashcard-section, .progress-section {
+    max-width: 700px;
+    margin: 1.5rem auto;
+    background: var(--card-color);
+    padding: 1.2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  input, textarea, button {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.4rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  button {
+    background-color: var(--main-color);
+    color: white;
+    font-weight: bold;
+    border: none;
+    margin-top: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #e6594c;
+    transform: scale(1.03);
+  }
+  .cocktail {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #ccc;
+    position: relative;
+  }
+  .cocktail img {
+    max-width: 100%;
+    margin-top: 0.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .edit-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent-color);
+    color: #333;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.3s;
+  }
+  .edit-btn:hover {
+    background-color: #f0c040;
+  }
+  .flashcard {
+    text-align: center;
+    background-color: #fffbe6;
+    border-radius: 12px;
+    padding: 1rem;
+    animation: fadeIn 0.5s ease-in;
+  }
+  .flashcard h3 {
+    color: var(--accent-color);
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+  .flashcard-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    animation: bounce 1s infinite;
+  }
+  .flashcard img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  #flashcardReveal, #quizFeedback {
+    background-color: #fff3e0;
+    border-left: 5px solid var(--accent-color);
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn-row button {
+    flex: 1;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @media (max-width: 600px) {
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 1rem;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
-    h1 {
-      text-align: center;
-      color: var(--main-color);
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
-      animation: popIn 0.8s ease-out;
-    }
-    form,
-    .cocktail-list,
-    .quiz-section,
-    .progress-section,
-    .flashcard-section {
-      max-width: 700px;
-      margin: 1.5rem auto;
-      background: var(--card-color);
-      padding: 1.2rem;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    input,
-    textarea,
-    button {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 0.4rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: var(--main-color);
-      color: white;
-      font-weight: bold;
-      border: none;
-      margin-top: 1rem;
-      transition: background-color 0.3s, transform 0.2s;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #e6594c;
-      transform: scale(1.03);
-    }
-    .cocktail {
-      margin-bottom: 1.5rem;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 1rem;
-    }
-    .cocktail img {
-      max-width: 100%;
-      margin-top: 0.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem;
     }
     .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 0.8rem;
+      flex-direction: column;
     }
-    .btn-row button {
-      flex: 1;
-    }
-    .flashcard {
-      text-align: center;
-      margin-top: 1rem;
-      background-color: #fffbe6;
-      border-radius: 12px;
-      padding: 1rem;
-      animation: fadeIn 0.5s ease-in;
-    }
-    .flashcard h3 {
-      color: var(--accent-color);
-      font-size: 1.6rem;
-      margin-bottom: 0.5rem;
-    }
-    .flashcard-emoji {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      animation: bounce 1s infinite;
-    }
-    .flashcard img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin: 1rem 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    .flashcard-section button,
-    .quiz-section button {
-      font-size: 1.1rem;
-    }
-    #quizFeedback,
-    #flashcardReveal {
-      background-color: #fff3e0;
-      border-left: 5px solid var(--accent-color);
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 10px;
-    }
-    @keyframes bounce {
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-5px);
-      }
-    }
-    @keyframes popIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-    @media (max-width: 600px) {
-      body {
-        padding: 0.5rem;
-      }
-    }
-  </style>
-  <script>
-    // Tes cocktails de base — tu peux les modifier ou ajouter via UI plus tard
-    const cocktails = [
-      {
-        name: 'Margarita',
-        ingredients: '50 ml Tequila\n25 ml Triple sec\n25 ml Jus de citron vert',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/MargaritaReal.jpg/320px-MargaritaReal.jpg',
-        knownCount: 0,
-        unknownCount: 0,
-      },
-      {
-        name: 'Mojito',
-        ingredients: '50 ml Rhum blanc\n30 ml Jus de citron vert\n2 cuillères à café de sucre\nFeuilles de menthe\nEau gazeuse',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Mojito-01.jpg/320px-Mojito-01.jpg',
-        knownCount: 0,
-        unknownCount: 0,
-      },
-      // Ajoute tes cocktails ici
-    ];
-
-    let shuffledCocktails = [];
-    let flashcardIndex = 0;
-
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-
-    function showFlashcard() {
-      const c = shuffledCocktails[flashcardIndex];
-      flashcardArea.innerHTML = `
-        <div class="flashcard">
-          <div class="flashcard-emoji">🤔</div>
-          <h3>${c.name}</h3>
-          ${c.image ? `<img src="${c.image}" alt="${c.name}">` : ''}
-          <button onclick="revealFlashcard('${c.ingredients.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Afficher les ingrédients</button>
-          <div id="flashcardReveal"></div>
-          <div style="margin-top:1rem;">
-            <button onclick="nextFlashcard(true)">✅ Je connaissais</button>
-            <button onclick="nextFlashcard(false)">❌ Je ne connaissais pas</button>
-          </div>
-        </div>
-      `;
-      document.getElementById('quizFeedback').innerHTML = '';
-    }
-
-    function revealFlashcard(text) {
-      document.getElementById('flashcardReveal').textContent = text;
-    }
-
-    function nextFlashcard(known) {
-      const c = shuffledCocktails[flashcardIndex];
-      if (known) c.knownCount++;
-      else c.unknownCount++;
-
-      flashcardIndex++;
-      if (flashcardIndex >= shuffledCocktails.length) {
-        alert('Fin du quiz ! Tu peux rejouer ou ajouter des cocktails.');
-        flashcardIndex = 0;
-        shuffleArray(shuffledCocktails);
-      }
-      showFlashcard();
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const total = cocktails.length;
-      let knownTotal = 0;
-      for (const c of cocktails) {
-        knownTotal += c.knownCount;
-      }
-      progressArea.textContent = `Cocktails connus : ${knownTotal} / ${total}`;
-    }
-
-    window.onload = () => {
-      shuffledCocktails = [...cocktails];
-      shuffleArray(shuffledCocktails);
-
-      flashcardArea = document.getElementById('flashcardArea');
-      progressArea = document.getElementById('progressArea');
-
-      showFlashcard();
-      updateProgress();
-    };
-  </script>
+  }
+</style>
 </head>
 <body>
-  <h1>🍸 Mon Carnet de Cocktails</h1>
 
-  <section class="flashcard-section">
-    <div id="flashcardArea"></div>
-    <div id="quizFeedback"></div>
-  </section>
+<h1>🍸 Carnet & Quiz Cocktails</h1>
 
-  <section class="progress-section">
-    <div id="progressArea"></div>
-  </section>
+<section class="cocktail-list">
+  <h2>Répertoire des cocktails</h2>
+  <div id="cocktailList"></div>
+
+  <h3 id="formTitle">Ajouter un nouveau cocktail</h3>
+  <form id="cocktailForm">
+    <label for="name">Nom du cocktail :</label>
+    <input type="text" id="name" required />
+
+    <label for="ingredients">Ingrédients (séparés par des sauts de ligne) :</label>
+    <textarea id="ingredients" rows="4" required></textarea>
+
+    <label for="image">URL de l'image (optionnel) :</label>
+    <input type="url" id="image" placeholder="https://example.com/image.jpg" />
+
+    <button type="submit">Ajouter / Modifier</button>
+    <button type="button" id="cancelEditBtn" style="display:none; margin-top:0.5rem; background:#ccc; color:#333;">Annuler la modification</button>
+  </form>
+</section>
+
+<section class="flashcard-section">
+  <h2>Flashcards - Teste ta mémoire !</h2>
+  <div id="flashcardArea"></div>
+  <div id="quizFeedback"></div>
+  <div class="btn-row">
+    <button id="prevFlashcardBtn">⬅️ Précédent</button>
+    <button id="nextFlashcardBtn">➡️ Suivant</button>
+    <button id="restartFlashcardBtn">🔄 Recommencer</button>
+  </div>
+</section>
+
+<section class="progress-section">
+  <h2>Progression</h2>
+  <div id="progressArea"></div>
+</section>
+
+<script>
+  // Charge ou initialise la liste des cocktails depuis localStorage
+  let cocktails = JSON.parse(localStorage.getItem('cocktails')) || [];
+
+  // Variables flashcard
+  let shuffledCocktails = [];
+  let flashcardIndex = 0;
+  let editingIndex = null;
+
+  // Éléments DOM
+  const cocktailListDiv = document.getElementById('cocktailList');
+  const flashcardArea = document.getElementById('flashcardArea');
+  const progressArea = document.getElementById('progressArea');
+  const quizFeedback = document.getElementById('quizFeedback');
+  const cocktailForm = document.getElementById('cocktailForm');
+  const formTitle = document.getElementById('formTitle');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+  function saveCocktails() {
+    localStorage.setItem('cocktails', JSON.stringify(cocktails));
+  }
+
+  function renderCocktailList() {
+    cocktailListDiv.innerHTML = '';
+    if(cocktails.length === 0){
+      cocktailListDiv.innerHTML = '<p>Aucun cocktail ajouté pour le moment.</p>';
+      return;
+    }
+    cocktails.forEach((c, i) => {
+      const div = document.createElement('div');
+      div.className = 'cocktail';
+      div.innerHTML = `
+        <strong>${c.name}</strong>
+        <button class="edit-btn" onclick="editCocktail(${i})">Modifier</button>
+        <p style="white-space: pre-wrap;">${c.ingredients}</p>
+        ${c.image ? `<img src="${c.image}" alt="${c.name}">` : ''}
+      `;
+      cocktailListDiv.appendChild(div);
+    });
+  }
+
+  function editCocktail(index) {
+    editingIndex = index;
+    const c = cocktails[index];
+    document.getElementById('name').value = c.name;
+    document.getElementById('ingredients').value = c.ingredients;
+    document.getElementById('image').value = c.image || '';
+    formTitle.textContent = `Modifier le cocktail "${c.name}"`;
+    cancelEditBtn.style.display = 'inline-block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  cancelEditBtn.onclick = () => {
+    resetForm();
+  };
+
+  function resetForm() {
+    editingIndex = null;
+    cocktailForm.reset();
+    formTitle.textContent = 'Ajouter un nouveau cocktail';
+    cancelEditBtn.style.display = 'none';
+  }
+
+  cocktailForm.onsubmit = function(event){
+    event.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const ingredients = document.getElementById('ingredients').value.trim();
+    const image = document.getElementById('image').value.trim();
+    if(!name || !ingredients) return alert("Nom et ingrédients obligatoires");
+    
+    if(editingIndex !== null){
+      cocktails[editingIndex] = {...cocktails[editingIndex], name, ingredients, image};
+    } else {
+      cocktails.push({name, ingredients, image, knownCount: 0, unknownCount: 0});
+    }
+    saveCocktails();
+    renderCocktailList();
+    resetForm();
+    shuffleAndStartFlashcards();
+  };
+
+  // Flashcards functions
+  function shuffleArray(arr) {
+    for(let i=arr.length-1; i>0; i--){
+      const j = Math.floor(Math.random() * (i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function shuffleAndStartFlashcards(){
+    shuffledCocktails = cocktails.filter(c => c.name).slice();
+    shuffleArray(shuffledCocktails);
+    flashcardIndex = 0;
+    showFlashcard();
+    updateProgress();
+    quizFeedback.textContent = '';
+  }
+
+  function showFlashcard(){
+    if(shuffledCocktails.length === 0){
+      flashcardArea.innerHTML = '<p>Aucun cocktail à afficher.</p>';
+      return;
+    }
+    const c = shuffledCocktails[flashcardIndex];
+    flashcardArea.innerHTML = `
+      <div class="flashcard">
+        <div class="flashcard-emoji">🤔</div>
+        <h3>${c.name}</h3>
+        ${c.image ? `<img src="${c.image}" alt="${c.name}">` : ''}
+        <button onclick="revealFlashcard('${c.ingredients.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')">Afficher les ingrédients</button>
+        <div id="flashcardReveal"></div>
+        <div style="margin-top:1rem;" class="btn-row">
+          <button onclick="nextFlashcard(true)">✅ Je connaissais</button>
+          <button onclick="nextFlashcard(false)">❌ Je ne connaissais pas</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function revealFlashcard(text){
+    document.getElementById('flashcardReveal').textContent = text;
+  }
+
+  function nextFlashcard(known){
+    const c = shuffledCocktails[flashcardIndex];
+    if(known) c.knownCount = (c.knownCount || 0) + 1;
+    else c.unknownCount = (c.unknownCount || 0) + 1;
+    saveCocktails();
+    flashcardIndex++;
+    if(flashcardIndex >= shuffledCocktails.length){
+      quizFeedback.textContent = '🎉 Fin du quiz ! Clique sur Recommencer pour refaire.';
+      flashcardIndex = shuffledCocktails.length -1;
+      return;
+    }
+    showFlashcard();
+    updateProgress();
+  }
+
+  function updateProgress(){
+    if(cocktails.length === 0){
+      progressArea.textContent = '';
+      return;
+    }
+    const totalKnown = cocktails.reduce((sum,c)=>sum+(c.knownCount||0),0);
+    progressArea.textContent = `Cocktails connus (validations positives) : ${totalKnown} / ${cocktails.length}`;
+  }
+
+  // Navigation flashcards
+  document.getElementById('nextFlashcardBtn').onclick = () => {
+    flashcardIndex++;
+    if(flashcardIndex >= shuffledCocktails.length) flashcardIndex = 0;
+    showFlashcard();
+  };
+
+  document.getElementById('prevFlashcardBtn').onclick = () => {
+    flashcardIndex--;
+    if(flashcardIndex < 0) flashcardIndex = shuffledCocktails.length - 1;
+    showFlashcard();
+  };
+
+  document.getElementById('restartFlashcardBtn').onclick = () => {
+    shuffleAndStartFlashcards();
+  };
+
+  // Initialisation
+  renderCocktailList();
+  shuffleAndStartFlashcards();
+</script>
+
 </body>
 </html>
